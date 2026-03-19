@@ -1,4 +1,4 @@
-// 1. Оператори порівняння 
+// Оператори порівняння 
 function findMinMax(arr) {
     if (arr.length === 0) return "Масив порожній";
     let min = arr[0], max = arr[0];
@@ -14,14 +14,14 @@ console.log("Мін/Макс масиву:", findMinMax([5, 12, 1, 9]));
 const car1 = { hp: 150 }, car2 = { hp: 200 };
 console.log("Чи однакові об'єкти за hp?", car1.hp === car2.hp);
 
-// 2. Логічні оператори 
+// Логічні оператори 
 const inRange = (n, a, b) => n >= a && n <= b; 
 console.log("Чи 25 у діапазоні 10-50?", inRange(25, 10, 50));
 
 let state = true;
 console.log("Стан до NOT:", state, "| після NOT:", !state); 
 
-// 3. Умовні розгалуження 
+// Умовні розгалуження 
 function getGrade(s) {
     if (s >= 90) return "відмінно"; 
     if (s >= 75) return "добре";
