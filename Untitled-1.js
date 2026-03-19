@@ -10,7 +10,6 @@ function findMinMax(arr) {
 }
 console.log("Мін/Макс масиву:", findMinMax([5, 12, 1, 9]));
 
-// Порівняння об'єктів 
 const car1 = { hp: 150 }, car2 = { hp: 200 };
 console.log("Чи однакові об'єкти за hp?", car1.hp === car2.hp);
 
