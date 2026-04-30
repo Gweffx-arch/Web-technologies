@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>ЛР№5 - JS: </title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #eceff1; padding: 20px; line-height: 1.6; }
+        .section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; }
+        button { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; transition: 0.3s; margin: 5px 0; }
+        button:hover { background: #2980b9; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        #shopLog { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 5px; font-family: monospace; height: 200px; overflow-y: auto; margin-top: 10px; }
+        
+        /* Лампочка */
+        #bulb { width: 80px; height: 80px; background: #7f8c8d; border-radius: 50%; margin: 15px auto; transition: 0.4s; border: 4px solid #34495e; }
+        #bulb.on { background: #f1c40f; box-shadow: 0 0 40px #f1c40f; border-color: #f39c12; }
+
+        /* Світлофор */
+        .traffic-light { width: 70px; background: #34495e; padding: 15px; border-radius: 15px; margin: 10px 0; display: flex; flex-direction: column; align-items: center; }
+        .light { width: 45px; height: 45px; border-radius: 50%; background: #2c3e50; margin: 8px 0; transition: 0.3s; }
+        .active-red { background: #e74c3c; box-shadow: 0 0 20px #e74c3c; }
+        .active-yellow { background: #f1c40f; box-shadow: 0 0 20px #f1c40f; }
+        .active-green { background: #2ecc71; box-shadow: 0 0 20px #2ecc71; }
+    </style>
+</head>
+<body>
+
+    <div class="section">
+        <h2>Завдання 1: Лампочка</h2>
+        <div id="bulb"></div>
+        <select id="bulbType">
+            <option value="Standard">Звичайна</option>
+            <option value="LED">Світлодіодна (з яскравістю)</option>
+        </select>
+        <button onclick="toggleBulb()">Вкл/Викл</button>
+        <button onclick="setBrightness()">Встановити яскравість</button>
+        <p id="bulbMsg">Статус: Вимкнено</p>
+    </div>
+
+    <div class="section">
+        <h2>Завдання 2: Світлофор</h2>
+        <div class="traffic-light">
+            <div id="red" class="light"></div>
+            <div id="yellow" class="light"></div>
+            <div id="green" class="light"></div>
+        </div>
+        <p>Стан: <span id="lightName">---</span></p>
+        <button onclick="startTraffic()">Запустити автоматично</button>
+        <button onclick="nextManual()">Наступний колір</button>
+    </div>
+
+    <div class="section">
+        <h2>Завдання 3: Дата та час</h2>
+        <h3 id="clock">00:00:00</h3>
+        <p>До Дня народження:</p>
+        <input type="date" id="bdayDate">
+        <button onclick="checkBday()">Порахувати</button>
+        <p id="bdayResult"></p>
+    </div>
+
+    <div class="section">
+        <h2>Завдання 4: Інтернет-магазин</h2>
+        <button onclick="demoAdd()">1. Додати товари</button>
+        <button onclick="demoOrder()">2. Зробити замовлення</button>
+        <button onclick="demoSearch()">3. Пошук товару</button>
+        <div id="shopLog">Система готова. Натисніть кнопки для тесту...</div>
+    </div>
+
+<script>
+    //ЗАВДАННЯ 1
+    let bulbTimer;
+    function toggleBulb() {
+        const b = document.getElementById('bulb');
+        b.classList.toggle('on');
+        document.getElementById('bulbMsg').innerText = b.classList.contains('on') ? "Статус: Увімкнено" : "Статус: Вимкнено";
+        
+        clearTimeout(bulbTimer);
+        bulbTimer = setTimeout(() => {
+            b.classList.remove('on');
+            document.getElementById('bulbMsg').innerText = "Автовимкнено (5 хв бездії)";
+        }, 300000); 
+    }
+    function setBrightness() {
+        if (document.getElementById('bulbType').value === 'LED') {
+            let b = prompt("Яскравість (0.1 - 1.0):", "1");
+            document.getElementById('bulb').style.opacity = b;
+        } else alert("Тільки для LED!");
+    }
+
+    //ЗАВДАННЯ 2
+    let currentState = 'red';
+    function updateLights(color) {
+        document.querySelectorAll('.light').forEach(l => l.className = 'light');
+        document.getElementById(color).classList.add('active-' + color);
+        document.getElementById('lightName').innerText = color.toUpperCase();
+    }
+    function nextManual() {
+        if (currentState === 'red') currentState = 'yellow';
+        else if (currentState === 'yellow') currentState = 'green';
+        else currentState = 'red';
+        updateLights(currentState);
+    }
+    function startTraffic() {
+        updateLights('red');
+        setTimeout(() => { updateLights('yellow'); 
+            setTimeout(() => { updateLights('green'); }, 3000);
+        }, 5000);
+    }
+
+    //ЗАВДАННЯ 3
+    setInterval(() => {
+        const n = new Date();
+        const blink = n.getSeconds() % 2 ? ":" : " ";
+        document.getElementById('clock').innerText = 
+            `${String(n.getHours()).padStart(2,'0')}${blink}${String(n.getMinutes()).padStart(2,'0')}${blink}${String(n.getSeconds()).padStart(2,'0')}`;
+    }, 1000);
+
+    function checkBday() {
+        const target = new Date(document.getElementById('bdayDate').value);
+        const diff = target - new Date();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('bdayResult').innerText = days > 0 ? `Лишилося днів: ${days}` : "Дата минула";
+    }
+
+    //ЗАВДАННЯ 4
+    const catalog = new Map();
+    const orders = new Set();
+    const history = new WeakMap();
+
+    function log(msg) {
+        const div = document.getElementById('shopLog');
+        div.innerHTML += `<br>> ${msg}`;
+        div.scrollTop = div.scrollHeight;
+    }
+
+    function demoAdd() {
+        const p1 = { id: 1, name: "Ноутбук", price: 30000, stock: 5 };
+        const p2 = { id: 2, name: "Мишка", price: 800, stock: 15 };
+        catalog.set(p1.id, p1);
+        catalog.set(p2.id, p2);
+        history.set(p1, ["Створено " + new Date().toLocaleTimeString()]);
+        log("Товари додано в Map. Створено записи в WeakMap.");
+    }
+
+    function demoOrder() {
+        if (catalog.size === 0) return log("Спочатку додайте товари!");
+        const p = catalog.get(1);
+        if (p.stock > 0) {
+            p.stock--;
+            orders.add(Symbol("Order_" + p.id));
+            log(`Замовлено ${p.name}. Залишок: ${p.stock}. Замовлення в Set.`);
+        }
+    }
+
+    function demoSearch() {
+        const name = prompt("Що шукаємо?", "Ноутбук");
+        let found = null;
+        catalog.forEach(p => { if(p.name === name) found = p; });
+        log(found ? `Знайдено: ${found.name}, Ціна: ${found.price}` : "Не знайдено");
+    }
+</script>
+</body>
+</html>
+
+    
